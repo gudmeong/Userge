@@ -8,22 +8,8 @@
 #
 # All rights reserved.
 
-from glob import glob
-from signal import SIGTERM
-from os import environ, getpid, kill
-from os.path import isfile, relpath
-from typing import Dict, List, Union
-
-_SECURE = [
-    # critical
-    'API_ID', 'API_HASH', 'BOT_TOKEN', 'HU_STRING_SESSION', 'DATABASE_URL', 'HEROKU_API_KEY',
-    'CUSTOM_PLUGINS_REPO',
-    # others
-    'USERGE_ANTISPAM_API', 'SPAM_WATCH_API', 'CURRENCY_API', 'OCR_SPACE_API_KEY',
-    'REMOVE_BG_API_KEY', 'G_DRIVE_CLIENT_ID', 'G_DRIVE_CLIENT_SECRET',
-    # unofficial
-    'ARL_TOKEN', 'GCS_API_KEY', 'GCS_IMAGE_E_ID', 'G_PHOTOS_CLIENT_ID',
-    'G_PHOTOS_CLIENT_SECRET', 'CH_LYDIA_API']
+from os import environ
+from typing import Dict, Optional
 
 
 class SafeDict(Dict[str, str]):
@@ -32,23 +18,14 @@ class SafeDict(Dict[str, str]):
         return '{' + key + '}'
 
 
-def get_import_path(root: str, path: str) -> Union[str, List[str]]:
-    """ return import path """
-    seperator = '\\' if '\\' in root else '/'
-    if isfile(path):
-        return '.'.join(relpath(path, root).split(seperator))[:-3]
-    all_paths = glob(root + path.rstrip(seperator) + f"{seperator}*.py", recursive=True)
-    return sorted(
-        [
-            '.'.join(relpath(f, root).split(seperator))[:-3] for f in all_paths
-            if not f.endswith("__init__.py")
-        ]
-    )
+_SECURE = {'API_ID', 'API_HASH', 'BOT_TOKEN', 'SESSION_STRING', 'DATABASE_URL', 'HEROKU_API_KEY'}
 
 
-def terminate() -> None:
-    """ terminate programme """
-    kill(getpid(), SIGTERM)
+def secure_env(key: Optional[str]) -> Optional[str]:
+    if key:
+        _SECURE.add(key)
+
+    return key
 
 
 def secure_text(text: str) -> str:
