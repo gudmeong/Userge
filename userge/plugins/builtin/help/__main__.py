@@ -259,8 +259,9 @@ if userge.has_bot:
     @userge.bot.on_callback_query(filters=filters.regex(pattern=r'^nutup$'))
     @check_owner
     async def callback_nutup(query: CallbackQuery):
+        message = query.message
         await query.answer("Tertutup")
-        await query.message.delete()
+        await userge.delete_messages(chat_id=message.chat.id, message_ids=message.id)
     
     @userge.bot.on_callback_query(filters=filters.regex(pattern=r"^chgclnt$"))
     @check_owner
@@ -337,6 +338,7 @@ if userge.has_bot:
 
     def default_buttons(cur_pos: str):
         tmp_btns = []
+        close_list = []
 
         if cur_pos != "mm":
             tmp_btns.append(InlineKeyboardButton(
@@ -353,15 +355,16 @@ if userge.has_bot:
             tmp_btns.append(
                 InlineKeyboardButton(
                     f"🔩 Preferred Client : {cur_clnt}",
-                    callback_data="chgclnt".encode()))
-
-        tmp_btns.append(
-            InlineKeyboardButton(
-                "Close Inline",
-                callback_data="nutup".encode(),
+                    callback_data="chgclnt".encode()
+                )
             )
-        )
-        return [tmp_btns]
+            close_list.append(
+                InlineKeyboardButton(
+                      "Close Inline",
+                      callback_data="nutup"
+                )
+            )
+        return [tmp_btns], close_list
 
     def category_data(cur_pos: str):
         pos_list = cur_pos.split('|')
