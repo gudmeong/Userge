@@ -50,8 +50,8 @@ class ChannelLogger:
         Returns:
             str
         """
-        return "<b><a href='https://t.me/c/{}/{}'>Preview</a></b>".format(
-            str(config.LOG_CHANNEL_ID)[4:], message_id)
+        link = f"https://t.me/c/{str(config.LOG_CHANNEL_ID)[4:]}/{message_id}"
+        return f"<b><a href='{link}'>Preview</a></b>"
 
     async def log(self, text: str, name: str = '') -> int:
         """\nsend text message to log channel.
@@ -71,13 +71,14 @@ class ChannelLogger:
             string = _gen_string(name)
         try:
             msg = await self._client.send_message(chat_id=self._id,
-                                                  text=string.format(text.strip()))
+                                                  text=string.format(text.strip()),
+                                                  disable_web_page_preview=True)
         except MessageTooLong:
             msg = await self._client.send_as_file(chat_id=self._id,
                                                   text=string.format(text.strip()),
                                                   filename="logs.log",
                                                   caption=string)
-        return msg.message_id
+        return msg.id
 
     async def fwd_msg(self,
                       message: Union['_message.Message', 'RawMessage'],
@@ -142,7 +143,7 @@ class ChannelLogger:
             msg = await message.client.send_cached_media(chat_id=self._id,
                                                          file_id=file_id,
                                                          caption=caption)
-            message_id = msg.message_id
+            message_id = msg.id
         else:
             message_id = await self.log(caption)
         return message_id

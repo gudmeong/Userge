@@ -21,7 +21,7 @@ CHANNEL = userge.getCLogger(__name__)
     'flags': {
         '-f': "fetch core repo",
         '-n': "view available new commits",
-        '-o': "view old commits (default 20)",
+        '-o': "view old commits (default limit 20)",
         '-b': "change branch",
         '-v': "change version"},
     'usage': "{tr}core [flags]",
@@ -30,7 +30,9 @@ CHANNEL = userge.getCLogger(__name__)
         "{tr}core -f", "{tr}core -n",
         "{tr}core -f -n : fetch and get updates",
         "{tr}core -o", "{tr}core -o=20 : limit results to 20",
-        "{tr}core -b=master", "{tr}core -v=750 : update id"]}, del_pre=True, allow_channels=False)
+        "{tr}core -b=master",
+        "{tr}core -v=750 : update id (grab using {tr}core -n or {tr}core -o)"]
+}, del_pre=True, allow_channels=False)
 async def core(message: Message):
     """ view or manage the core repository """
     flags = message.flags
@@ -41,7 +43,7 @@ async def core(message: Message):
     set_branch, branch = 'b' in flags, flags.get('b')
     set_version, version = 'v' in flags, int(flags.get('v') or 0)
 
-    await message.edit("```processing ...```")
+    await message.edit("<pre>processing ...</pre>")
 
     if fetch:
         await api.fetch_core()
@@ -67,7 +69,7 @@ async def core(message: Message):
 
         out = _updates_to_str(updates)
         await message.edit_or_send_as_file(
-            f"**{len(updates)}** old commits for core repo\n\n{out}",
+            f"**{len(updates)}** old commits of core repo\n\n{out}",
             del_in=0, disable_web_page_preview=True)
 
     elif set_branch or set_version:
@@ -95,10 +97,10 @@ async def core(message: Message):
             await message.edit(
                 f"done, do `{config.CMD_TRIGGER}restart -h` to apply changes", del_in=3)
         else:
-            await message.edit("```didn't change anything```", del_in=3)
+            await message.edit("<pre>didn't change anything</pre>", del_in=3)
 
     elif fetch:
-        await message.edit("```fetched core repo```", del_in=3)
+        await message.edit("<pre>fetched core repo</pre>", del_in=3)
 
     else:
         core_repo = await api.get_core()
@@ -119,21 +121,24 @@ async def core(message: Message):
 @userge.on_cmd("repos", about={
     'header': "view or manage plugins repositories",
     'flags': {
-        '-f': "fetch plugins repo",
-        '-id': "plugins repo id",
+        '-f': "fetch one or all plugins repos",
+        '-id': "plugins repo id (grab using {tr}repos)",
         '-n': "view available new commits",
-        '-o': "view old commits",
+        '-o': "view old commits (default limit 20)",
         '-b': "change branch",
         '-v': "change version",
-        '-p': "change priority",
+        '-p': "change priority (-p2 > -p1)",
         '-invalidate': "notify loader to rebuild all the plugins"},
     'usage': "{tr}repos [flags]",
     'examples': [
         "{tr}repos : see plugins repos info",
-        "{tr}repos -f", "{tr}repos -id=1 -n",
+        "{tr}repos -f : fetch all plugins repos",
+        "{tr}repos -id=1 -f : only fetch this repo",
+        "{tr}repos -id=1 -n",
         "{tr}repos -f -id=1 -n : fetch and get updates",
         "{tr}repos -id=1 -o", "{tr}repos -id=1 -o=20 : limit results to 20",
-        "{tr}repos -id=1 -b=master", "{tr}repos -id=1 -v=750 : update id",
+        "{tr}repos -id=1 -b=master",
+        "{tr}repos -id=1 -v=750 : update id (grab using -n or -o flags)",
         "{tr}repos -id=1 -p=5", "{tr}repos -invalidate"]}, del_pre=True, allow_channels=False)
 async def repos(message: Message):
     """ view or manage plugins repositories """
@@ -147,14 +152,12 @@ async def repos(message: Message):
     set_version, version = 'v' in flags, int(flags.get('v') or 0)
     set_priority, priority = 'p' in flags, flags.get('p')
 
-    await message.edit("```processing ...```")
-
-    if fetch:
-        await api.fetch_repos()
+    await message.edit("<pre>processing ...</pre>")
 
     if repo_id <= 0:
         if fetch:
-            await message.edit("```fetched plugins repos```", del_in=3)
+            await api.fetch_repos()
+            await message.edit("<pre>fetched plugins repos</pre>", del_in=3)
 
         elif invalidate:
             await api.invalidate_repos_cache()
@@ -166,7 +169,7 @@ async def repos(message: Message):
             plg_repos = await api.get_repos()
 
             if not plg_repos:
-                await message.edit("```no repos found```", del_in=3)
+                await message.edit("<pre>no repos found</pre>", del_in=3)
                 return
 
             out = "**Repos Details**\n\n"
@@ -184,6 +187,9 @@ async def repos(message: Message):
             await message.edit_or_send_as_file(out, del_in=0, disable_web_page_preview=True)
 
     else:
+        if fetch:
+            await api.fetch_repo(repo_id)
+
         repo_details = await api.get_repo(repo_id)
 
         if not repo_details:
@@ -199,7 +205,7 @@ async def repos(message: Message):
 
             out = _updates_to_str(updates)
             await message.edit_or_send_as_file(
-                f"{len(updates)} new commits available for repo: {repo_id}\n\n{out}",
+                f"**{len(updates)}** new commits available for repo: `{repo_id}`\n\n{out}",
                 del_in=0, disable_web_page_preview=True)
 
         elif get_old:
@@ -211,7 +217,7 @@ async def repos(message: Message):
 
             out = _updates_to_str(updates)
             await message.edit_or_send_as_file(
-                f"{len(updates)} old commits for repo: {repo_id}\n\n{out}",
+                f"**{len(updates)}** old commits of repo: `{repo_id}`\n\n{out}",
                 del_in=0, disable_web_page_preview=True)
 
         elif set_branch or set_version or set_priority:
@@ -245,10 +251,10 @@ async def repos(message: Message):
                 await message.edit(
                     f"done, do `{config.CMD_TRIGGER}restart -h` to apply changes", del_in=3)
             else:
-                await message.edit("```didn't change anything```", del_in=3)
+                await message.edit("<pre>didn't change anything</pre>", del_in=3)
 
         elif fetch:
-            await message.edit("```fetched plugins repos```", del_in=3)
+            await message.edit(f"<pre>fetched plugins repo: {repo_id}</pre>", del_in=3)
 
         else:
             await message.err("invalid flags")
@@ -260,10 +266,11 @@ async def repos(message: Message):
         '-b': "branch name (optional|default master)",
         '-p': "priority (optional|default 1)"},
     'usage': "{tr}addrepo [flags] url",
+    'others': "plugins of higher priority repos will override plugins of low priority repos",
     'examples': [
         "{tr}addrepo https://github.com/UsergeTeam/Userge-Plugins",
-        "{tr}addrepo -b=dev https://github.com/UsergeTeam/Userge-Plugins",
-        "{tr}addrepo -b=dev -p=5 https://github.com/UsergeTeam/Userge-Plugins"]
+        "{tr}addrepo -b=master https://github.com/UsergeTeam/Userge-Plugins",
+        "{tr}addrepo -b=master -p=1 https://github.com/UsergeTeam/Userge-Plugins"]
 }, del_pre=True, allow_channels=False)
 async def add_repo(message: Message):
     """ add a plugins repo """
@@ -277,19 +284,19 @@ async def add_repo(message: Message):
         await message.err("no input url")
         return
 
-    await message.edit("```processing ...```")
+    await message.edit("<pre>processing ...</pre>")
 
     if await api.add_repo(priority, branch, url):
         await message.edit("added repo, "
                            f"do `{config.CMD_TRIGGER}restart -h` to apply changes", del_in=3)
 
     else:
-        await message.edit("```repo was already added```", del_in=3)
+        await message.edit("<pre>repo was already added or invalid</pre>", del_in=3)
 
 
 @userge.on_cmd("rmrepo", about={
     'header': "remove a plugins repo",
-    'flags': {'-id': "plugins repo id"},
+    'flags': {'-id': "plugins repo id (grab using {tr}repos)"},
     'usage': "{tr}rmrepo [flag]",
     'examples': "{tr}rmrepo -id=2"}, del_pre=True, allow_channels=False)
 async def rm_repo(message: Message):
@@ -300,14 +307,14 @@ async def rm_repo(message: Message):
         await message.err("empty or invalid repo id")
         return
 
-    await message.edit("```processing ...```")
+    await message.edit("<pre>processing ...</pre>")
 
     if await api.remove_repo(int(repo_id)):
         await message.edit("removed repo, "
                            f"do `{config.CMD_TRIGGER}restart -h` to apply changes", del_in=3)
 
     else:
-        await message.edit("```couldn't find that repo```", del_in=3)
+        await message.edit("<pre>couldn't find that repo</pre>", del_in=3)
 
 
 @userge.on_cmd("consts", about={
@@ -318,7 +325,7 @@ async def consts(message: Message):
     data_ = await api.get_constraints()
 
     if not data_:
-        await message.edit("```no constraints found```", del_in=3)
+        await message.edit("<pre>no constraints found</pre>", del_in=3)
         return
 
     out = ""
@@ -331,6 +338,7 @@ async def consts(message: Message):
 
 @userge.on_cmd("addconsts", about={
     'header': "add constraints",
+    'description': "can ignore plugins, categories or even them from specific repos easily",
     'flags': {'-type': "constraints type (include|exclude|in)"},
     'usage': "{tr}addconsts [flag] data",
     'data_types': ["plugin", "category/", "repo/plugin", "repo/category/"],
@@ -355,18 +363,20 @@ async def add_consts(message: Message):
         await message.err("no data provided")
         return
 
-    await message.edit("```processing ...```")
+    await message.edit("<pre>processing ...</pre>")
 
     if await api.add_constraints(c_type, data.split()):
         await message.edit("added constraints, "
                            f"do `{config.CMD_TRIGGER}restart -h` to apply changes", del_in=3)
 
     else:
-        await message.edit("```didn't add anything```", del_in=3)
+        await message.edit("<pre>didn't add anything</pre>", del_in=3)
 
 
 @userge.on_cmd("rmconsts", about={
     'header': "remove constraints",
+    'description': "if the type is provided, "
+                   "then the constraints only in this type will be removed",
     'flags': {
         '-type': "constraints type (include|exclude|in) (optional)"},
     'usage': "{tr}rmconsts [flag] data",
@@ -390,18 +400,20 @@ async def rm_consts(message: Message):
         await message.err("no data provided")
         return
 
-    await message.edit("```processing ...```")
+    await message.edit("<pre>processing ...</pre>")
 
     if await api.remove_constraints(c_type, data.split()):
         await message.edit("removed constraints, "
                            f"do `{config.CMD_TRIGGER}restart -h` to apply changes", del_in=3)
 
     else:
-        await message.edit("```didn't remove anything```", del_in=3)
+        await message.edit("<pre>didn't remove anything</pre>", del_in=3)
 
 
 @userge.on_cmd("clrconsts", about={
     'header': "clear constraints",
+    'description': "if the type is provided, "
+                   "then the constraints only in this type will be cleared",
     'flags': {
         '-type': "constraints type (include|exclude|in) (optional)"},
     'usage': "{tr}clrconsts [flag]",
@@ -417,24 +429,26 @@ async def clr_consts(message: Message):
         await message.err("invalid type")
         return
 
-    await message.edit("```processing ...```")
+    await message.edit("<pre>processing ...</pre>")
 
     if await api.clear_constraints(c_type):
         await message.edit("cleared constraints, "
                            f"do `{config.CMD_TRIGGER}restart -h` to apply changes", del_in=3)
 
     else:
-        await message.edit("```nothing found to clear```", del_in=3)
+        await message.edit("<pre>nothing found to clear</pre>", del_in=3)
 
 
 @userge.on_cmd("update", about={
     'header': "Check Updates or Update Userge",
+    'description': "use {tr}core and {tr}repos, "
+                   "if you want more advanced control over version controlling",
     'flags': {
         '-c': "view updates for core repo",
         '-r': "view updates for all plugins repos",
         '-pull': "pull updates",
         '-restart': "restart after pulled"},
-    'usage': "{tr}update [-c|-r|-a] [-pull]",
+    'usage': "{tr}update [-c|-r] [-pull] [-restart]",
     'examples': [
         "{tr}update : check updates for the whole project",
         "{tr}update -c : check updates for core repo",
@@ -522,7 +536,7 @@ async def update(message: Message):
         else:
             await message.edit_or_send_as_file(updates, del_in=0, disable_web_page_preview=True)
     else:
-        await message.edit("```no updates found```", del_in=3)
+        await message.edit("<pre>no updates found</pre>", del_in=3)
 
 
 def _updates_to_str(updates: List[Update]) -> str:

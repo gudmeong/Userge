@@ -14,10 +14,10 @@ import inspect
 import asyncio
 from typing import Optional, Union, List
 
+from pyrogram import enums
 from pyrogram.types import InlineKeyboardMarkup, MessageEntity
 
 from userge import config
-from userge.utils import secure_text
 from ...ext import RawClient
 from ... import types
 
@@ -29,7 +29,7 @@ class EditMessageText(RawClient):  # pylint: disable=missing-class-docstring
                                 text: str,
                                 del_in: int = -1,
                                 log: Union[bool, str] = False,
-                                parse_mode: Union[str, object] = object,
+                                parse_mode: Optional[enums.ParseMode] = None,
                                 entities: List[MessageEntity] = None,
                                 disable_web_page_preview: Optional[bool] = None,
                                 reply_markup: InlineKeyboardMarkup = None
@@ -59,7 +59,7 @@ class EditMessageText(RawClient):  # pylint: disable=missing-class-docstring
                 to the log channel.
                 If ``str``, the logger name will be updated.
 
-            parse_mode (``str``, *optional*):
+            parse_mode (:obj:`enums.ParseMode`, *optional*):
                 By default, texts are parsed using
                 both Markdown and HTML styles.
                 You can combine both syntaxes together.
@@ -85,8 +85,6 @@ class EditMessageText(RawClient):  # pylint: disable=missing-class-docstring
         Raises:
             RPCError: In case of a Telegram RPC error.
         """
-        if text and chat_id not in config.AUTH_CHATS:
-            text = secure_text(str(text))
         msg = await super().edit_message_text(chat_id=chat_id,
                                               message_id=message_id,
                                               text=text,
@@ -100,5 +98,6 @@ class EditMessageText(RawClient):  # pylint: disable=missing-class-docstring
         del_in = del_in or config.Dynamic.MSG_DELETE_TIMEOUT
         if del_in > 0:
             await asyncio.sleep(del_in)
+            setattr(msg, "_client", self)
             return bool(await msg.delete())
         return types.bound.Message.parse(self, msg, module=module)

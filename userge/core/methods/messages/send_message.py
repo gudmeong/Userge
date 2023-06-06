@@ -12,14 +12,15 @@ __all__ = ['SendMessage']
 
 import asyncio
 import inspect
+from datetime import datetime
 from typing import Optional, Union, List
 
 from pyrogram.types import (
     InlineKeyboardMarkup, ReplyKeyboardMarkup,
     ReplyKeyboardRemove, ForceReply, MessageEntity)
+from pyrogram import enums
 
 from userge import config
-from userge.utils import secure_text
 from ... import types
 from ...ext import RawClient
 
@@ -30,13 +31,13 @@ class SendMessage(RawClient):  # pylint: disable=missing-class-docstring
                            text: str,
                            del_in: int = -1,
                            log: Union[bool, str] = False,
-                           parse_mode: Union[str, object] = object,
+                           parse_mode: Optional[enums.ParseMode] = None,
                            entities: List[MessageEntity] = None,
                            disable_web_page_preview: Optional[bool] = None,
                            disable_notification: Optional[bool] = None,
                            reply_to_message_id: Optional[int] = None,
-                           schedule_date: Optional[int] = None,
-                           protect_content: bool = None,
+                           schedule_date: Optional[datetime] = None,
+                           protect_content: Optional[bool] = None,
                            reply_markup: Union[InlineKeyboardMarkup,
                                                ReplyKeyboardMarkup,
                                                ReplyKeyboardRemove,
@@ -65,7 +66,7 @@ class SendMessage(RawClient):  # pylint: disable=missing-class-docstring
                 If ``True``, the message will be forwarded to the log channel.
                 If ``str``, the logger name will be updated.
 
-            parse_mode (``str``, *optional*):
+            parse_mode (:obj:`enums.ParseMode`, *optional*):
                 By default, texts are parsed using both Markdown and HTML styles.
                 You can combine both syntaxes together.
                 Pass "markdown" or "md" to enable Markdown-style parsing only.
@@ -86,7 +87,7 @@ class SendMessage(RawClient):  # pylint: disable=missing-class-docstring
             reply_to_message_id (``int``, *optional*):
                 If the message is a reply, ID of the original message.
 
-            schedule_date (``int``, *optional*):
+            schedule_date (:py:obj:`~datetime.datetime`, *optional*):
                 Date when the message will be automatically sent. Unix time.
 
             protect_content (``bool``, *optional*):
@@ -101,8 +102,6 @@ class SendMessage(RawClient):  # pylint: disable=missing-class-docstring
         Returns:
             :obj:`Message`: On success, the sent text message or True is returned.
         """
-        if text and chat_id not in config.AUTH_CHATS:
-            text = secure_text(str(text))
         msg = await super().send_message(chat_id=chat_id,
                                          text=text,
                                          parse_mode=parse_mode,
@@ -119,5 +118,6 @@ class SendMessage(RawClient):  # pylint: disable=missing-class-docstring
         del_in = del_in or config.Dynamic.MSG_DELETE_TIMEOUT
         if del_in > 0:
             await asyncio.sleep(del_in)
+            setattr(msg, "_client", self)
             return bool(await msg.delete())
         return types.bound.Message.parse(self, msg, module=module)

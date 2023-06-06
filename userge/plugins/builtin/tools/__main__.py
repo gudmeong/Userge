@@ -121,7 +121,7 @@ async def jsonify(message: Message):
 async def pingme(message: Message):
     """ ping tg servers """
     start = datetime.now()
-    await message.client.send(Ping(ping_id=0))
+    await message.client.invoke(Ping(ping_id=0))
     end = datetime.now()
 
     m_s = (end - start).microseconds / 1000
@@ -129,22 +129,27 @@ async def pingme(message: Message):
 
 
 @userge.on_cmd("s", about={
-    'header': "search commands in USERGE",
-    'examples': "{tr}s wel"}, allow_channels=False)
+    'header': "search commands or plugins",
+    'flags': {'-p': "search plugin"},
+    'examples': ["{tr}s wel", "{tr}s -p gdrive"]}, allow_channels=False)
 async def search(message: Message):
     """ search commands """
-    cmd = message.input_str
-    if not cmd:
-        await message.err("Enter any keyword to search in commands")
+    key = message.filtered_input_str
+    if not key:
+        await message.err("input not found")
         return
 
-    found = [i for i in sorted(list(userge.manager.loaded_commands)) if cmd in i]
+    plugins = '-p' in message.flags
+    data = list(userge.manager.loaded_plugins if plugins else userge.manager.loaded_commands)
+
+    found = [i for i in sorted(data) if key in i]
     out_str = '    '.join(found)
 
     if found:
-        out = f"**--I found ({len(found)}) commands for-- : `{cmd}`**\n\n`{out_str}`"
+        out = f"**--found {len(found)} {'plugin' if plugins else 'command'}(s) for-- : `{key}`**"
+        out += f"\n\n`{out_str}`"
     else:
-        out = f"__command not found for__ : `{cmd}`"
+        out = f"__nothing found for__ : `{key}`"
 
     await message.edit(text=out, del_in=0)
 
@@ -152,14 +157,17 @@ async def search(message: Message):
 @userge.on_cmd("logs", about={
     'header': "check userge logs",
     'flags': {
-        '-h': "get heroku logs",
-        '-l': "heroku logs lines limit : default 100"}}, allow_channels=False)
+        '-h': "get heroku logs (default limit 100)",
+        '-l': "get loader logs"},
+    'examples': [
+        "{tr}logs", "{tr}logs -h", "{tr}logs -h200", "{tr}logs -l"]
+}, allow_channels=False)
 async def check_logs(message: Message):
     """ check logs """
     await message.edit("`checking logs ...`")
 
     if '-h' in message.flags and config.HEROKU_APP:
-        limit = int(message.flags.get('-l', 100))
+        limit = int(message.flags.get('-h') or 100)
         logs = await pool.run_in_thread(config.HEROKU_APP.get_log)(lines=limit)
 
         await message.client.send_as_file(chat_id=message.chat.id,
@@ -167,9 +175,10 @@ async def check_logs(message: Message):
                                           filename='userge-heroku.log',
                                           caption=f'userge-heroku.log [ {limit} lines ]')
     else:
+        filename = f"{'loader' if '-l' in message.flags else 'userge'}.log"
         await message.client.send_document(chat_id=message.chat.id,
-                                           document="logs/userge.log",
-                                           caption='userge.log')
+                                           document=f"logs/{filename}",
+                                           caption=filename)
     await message.delete()
 
 

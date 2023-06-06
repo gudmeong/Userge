@@ -19,6 +19,7 @@ from pyrogram import filters as _filters
 from pyrogram.filters import Filter
 from pyrogram.types import Message as RawMessage
 from pyrogram.handlers import MessageHandler
+from pyrogram import enums
 
 from userge import logging
 from userge.utils.exceptions import StopConversation
@@ -73,7 +74,7 @@ class Conversation:
                 filter specific response.
 
         Returns:
-            On success, the recieved Message is returned.
+            On success, the received Message is returned.
         """
         if self._count >= self._limit:
             raise _MsgLimitReached
@@ -112,13 +113,13 @@ class Conversation:
 
     async def send_message(self,
                            text: str,
-                           parse_mode: Union[str, object] = object) -> RawMessage:
+                           parse_mode: Optional[enums.ParseMode] = None) -> RawMessage:
         """\nSend text messages to the conversation.
 
         Parameters:
             text (``str``):
                 Text of the message to be sent.
-            parse_mode (``str | object``):
+            parse_mode (:obj:`enums.ParseMode`, *optional*):
                 parser to be used to parse text entities.
 
         Returns:
@@ -160,7 +161,7 @@ class Conversation:
         """
         return await self._client.forward_messages(chat_id=self._chat_id,
                                                    from_chat_id=message.chat.id,
-                                                   message_ids=message.message_id)
+                                                   message_ids=message.id)
 
     @staticmethod
     def init(client: _CL_TYPE) -> None:

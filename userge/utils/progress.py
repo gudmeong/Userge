@@ -10,7 +10,7 @@
 
 import time
 from math import floor
-from typing import Dict, Tuple
+from typing import Dict, Tuple, Optional
 
 from pyrogram.errors.exceptions import FloodWait
 
@@ -26,11 +26,12 @@ async def progress(current: int,
                    message: 'userge.Message',
                    ud_type: str,
                    file_name: str = '',
-                   delay: int = config.Dynamic.EDIT_SLEEP_TIMEOUT) -> None:
+                   delay: Optional[int] = None) -> None:
     """ progress function """
     if message.process_is_canceled:
         await message.client.stop_transmission()
-    task_id = f"{message.chat.id}.{message.message_id}"
+    delay = delay or config.Dynamic.EDIT_SLEEP_TIMEOUT
+    task_id = f"{message.chat.id}.{message.id}"
     if current == total:
         if task_id not in _TASKS:
             return
@@ -38,7 +39,7 @@ async def progress(current: int,
         try:
             await message.edit("`finalizing process ...`")
         except FloodWait as f_e:
-            time.sleep(f_e.x)
+            time.sleep(f_e.value)
         return
     now = time.time()
     if task_id not in _TASKS:
@@ -52,7 +53,7 @@ async def progress(current: int,
         time_to_completion = time_formatter(int((total - current) / speed))
         progress_str = \
             "__{}__ : `{}`\n" + \
-            "```[{}{}]```\n" + \
+            "```\n[{}{}]```\n" + \
             "**Progress** : `{}%`\n" + \
             "**Completed** : `{}`\n" + \
             "**Total** : `{}`\n" + \
@@ -73,4 +74,4 @@ async def progress(current: int,
         try:
             await message.edit(progress_str)
         except FloodWait as f_e:
-            time.sleep(f_e.x)
+            time.sleep(f_e.value)
