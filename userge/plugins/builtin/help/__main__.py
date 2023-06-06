@@ -364,7 +364,7 @@ if userge.has_bot:
                       callback_data="nutup"
                 )
             )
-        return [tmp_btns], [close_list]
+        return [tmp_btns, close_list]
 
     def category_data(cur_pos: str):
         pos_list = cur_pos.split('|')
