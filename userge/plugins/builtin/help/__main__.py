@@ -53,11 +53,11 @@ async def helpme(message: Message) -> None:  # pylint: disable=missing-function-
     if userge.has_bot and '-i' in message.flags:
         bot = (await userge.bot.get_me()).username
         menu = await userge.get_inline_bot_results(bot)
-        await userge.send_inline_bot_result(
+        await message.delete()
+        return await userge.send_inline_bot_result(
             chat_id=message.chat.id,
             query_id=menu.query_id,
             result_id=menu.results[1].id)
-        return await message.delete()
 
     if not message.input_str:
         out_str = f"""({len(plugins)}) Plugins\n\n"""
@@ -258,7 +258,7 @@ if userge.has_bot:
 
     @userge.bot.on_callback_query(filters=filters.regex(pattern=r'^nutup$'))
     @check_owner
-    async def callback_nutup(_, query: CallbackQuery):
+    async def callback_nutup(query: CallbackQuery):
         message = query.message
         await query.answer("Tertutup", True)
         await userge.delete_messages(chat_id=message.chat.id, message_ids=message.id)
