@@ -40,13 +40,13 @@ async def _init() -> None:
         config.Dynamic.USE_USER_FOR_CLIENT_CHECKS = bool(data['is_user'])
 
 
-@userge.on_cmd("help", about={
+@userge.on_cmd("h", about={
     'header': "Guide to use USERGE commands",
     'flags': {'-i': "open help menu in inline"},
-    'usage': "{tr}help [flag] [plugin_name | command_name]",
+    'usage': "{tr}h [flag] [plugin_name | command_name]",
     'examples': [
-        "{tr}help", "{tr}help -i", "{tr}help help",
-        "{tr}help core", "{tr}help loader"]}, allow_channels=False)
+        "{tr}help", "{tr}h -i", "{tr}h help",
+        "{tr}h core", "{tr}h loader"]}, allow_channels=False)
 async def helpme(message: Message) -> None:  # pylint: disable=missing-function-docstring
     plugins = userge.manager.loaded_plugins
 
@@ -256,6 +256,12 @@ if userge.has_bot:
         await callback_query.edit_message_text(
             "🖥 **Userge Main Menu** 🖥", reply_markup=InlineKeyboardMarkup(main_menu_buttons()))
 
+    @userge.bot.on_callback_query(filters=filters.regex(pattern=r'^nutup$'))
+    @check_owner
+    async def callback_nutup(query: CallbackQuery):
+        await query.answer("Tertutup")
+        await query.message.delete()
+    
     @userge.bot.on_callback_query(filters=filters.regex(pattern=r"^chgclnt$"))
     @check_owner
     async def callback_chgclnt(callback_query: CallbackQuery):
@@ -349,6 +355,12 @@ if userge.has_bot:
                     f"🔩 Preferred Client : {cur_clnt}",
                     callback_data="chgclnt".encode()))
 
+        tmp_btns.append(
+            InlineKeyboardButton(
+                "Close Inline",
+                callback_data="nutup".encode(),
+            )
+        )
         return [tmp_btns]
 
     def category_data(cur_pos: str):

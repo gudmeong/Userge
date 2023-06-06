@@ -79,11 +79,11 @@ def input_checker(func: Callable[[Message], Awaitable[Any]]):
     return wrapper
 
 
-@userge.on_cmd("exec", about={
+@userge.on_cmd("ex", about={
     'header': "run commands in exec",
     'flags': {'-r': "raw text when send as file"},
-    'usage': "{tr}exec [commands]",
-    'examples': "{tr}exec echo \"Userge\""}, allow_channels=False)
+    'usage': "{tr}ex [commands]",
+    'examples': "{tr}ex echo \"Userge\""}, allow_channels=False)
 @input_checker
 async def exec_(message: Message):
     """ run commands in exec """
@@ -111,7 +111,7 @@ _KEY = '_OLD'
 _EVAL_TASKS: Dict[asyncio.Future, str] = {}
 
 
-@userge.on_cmd("eval", about={
+@userge.on_cmd("ev", about={
     'header': "run python code line | lines",
     'flags': {
         '-r': "raw text when send as file",
@@ -122,12 +122,12 @@ _EVAL_TASKS: Dict[asyncio.Future, str] = {}
         '-c': "cancel specific running eval task",
         '-ca': "cancel all running eval tasks"
     },
-    'usage': "{tr}eval [flag] [code lines OR reply to .txt | .py file]",
+    'usage': "{tr}ev [flag] [code lines OR reply to .txt | .py file]",
     'examples': [
-        "{tr}eval print('Userge')", "{tr}eval -s print('Userge')",
-        "{tr}eval 5 + 6", "{tr}eval -s 5 + 6",
-        "{tr}eval -p x = 'private_value'", "{tr}eval -n y = 'new_value'",
-        "{tr}eval -c2", "{tr}eval -ca", "{tr}eval -l"]}, allow_channels=False)
+        "{tr}ev print('Userge')", "{tr}ev -s print('Userge')",
+        "{tr}ev 5 + 6", "{tr}ev -s 5 + 6",
+        "{tr}ev -p x = 'private_value'", "{tr}ev -n y = 'new_value'",
+        "{tr}ev -c2", "{tr}ev -ca", "{tr}ev -l"]}, allow_channels=False)
 @input_checker
 async def eval_(message: Message):
     """ run python code """
@@ -253,11 +253,11 @@ async def eval_(message: Message):
             _EVAL_TASKS.pop(future, None)
 
 
-@userge.on_cmd("term", about={
+@userge.on_cmd("t", about={
     'header': "run commands in shell (terminal)",
     'flags': {'-r': "raw text when send as file"},
-    'usage': "{tr}term [commands]",
-    'examples': "{tr}term echo \"Userge\""}, allow_channels=False)
+    'usage': "{tr}t [commands]",
+    'examples': "{tr}t echo \"Userge\""}, allow_channels=False)
 @input_checker
 async def term_(message: Message):
     """ run commands in shell (terminal with live update) """
