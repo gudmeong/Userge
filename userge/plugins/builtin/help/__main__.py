@@ -258,10 +258,10 @@ if userge.has_bot:
 
     @userge.bot.on_callback_query(filters=filters.regex(pattern=r'^nutup$'))
     @check_owner
-    async def callback_nutup(query: CallbackQuery):
+    async def callback_nutup(client, query):
         message = query.message
         await query.answer("Tertutup")
-        await userge.delete_messages(chat_id=message.chat.id, message_ids=message.id)
+        await client.delete_messages(chat_id=message.chat.id, message_ids=message.id)
     
     @userge.bot.on_callback_query(filters=filters.regex(pattern=r"^chgclnt$"))
     @check_owner
