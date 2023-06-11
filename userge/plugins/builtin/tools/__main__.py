@@ -116,7 +116,7 @@ async def jsonify(message: Message):
     await message.edit_or_send_as_file(text=msg, filename="json.txt", caption="Too Large")
 
 
-@userge.on_cmd("ping", about={
+@userge.on_cmd("p", about={
     'header': "check how long it takes to ping your userbot"}, group=-1)
 async def pingme(message: Message):
     """ ping tg servers """

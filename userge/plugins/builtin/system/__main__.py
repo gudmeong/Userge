@@ -50,14 +50,14 @@ async def _init() -> None:
             system.DISABLED_CHATS.add(i['_id'])
 
 
-@userge.on_cmd('restart', about={
+@userge.on_cmd('r', about={
     'header': "Restarts the bot and reload all plugins",
     'flags': {
         '-h': "restart hard",
         '-d': "clean working folder",
         '-hu': "restart heroku"},
-    'usage': "{tr}restart [flag | flags]",
-    'examples': "{tr}restart -t -d"}, del_pre=True, allow_channels=False)
+    'usage': "{tr}r [flag | flags]",
+    'examples': "{tr}r -t -d"}, del_pre=True, allow_channels=False)
 async def restart_(message: Message):
     """ restart userge """
     await message.edit("`Restarting Userge Services`", log=__name__)
