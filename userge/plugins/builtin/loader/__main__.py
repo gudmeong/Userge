@@ -439,7 +439,7 @@ async def clr_consts(message: Message):
         await message.edit("<pre>nothing found to clear</pre>", del_in=3)
 
 
-@userge.on_cmd("update", about={
+@userge.on_cmd("up", about={
     'header': "Check Updates or Update Userge",
     'description': "use {tr}core and {tr}repos, "
                    "if you want more advanced control over version controlling",
@@ -448,15 +448,15 @@ async def clr_consts(message: Message):
         '-r': "view updates for all plugins repos",
         '-pull': "pull updates",
         '-restart': "restart after pulled"},
-    'usage': "{tr}update [-c|-r] [-pull] [-restart]",
+    'usage': "{tr}up [-c|-r] [-pull] [-restart]",
     'examples': [
-        "{tr}update : check updates for the whole project",
-        "{tr}update -c : check updates for core repo",
-        "{tr}update -r : check updates for all plugins repos",
-        "{tr}update -pull : pull latest updates to the whole project",
-        "{tr}update -pull -restart : auto restart after pulled",
-        "{tr}update -c -pull : pull latest updates to the core repo",
-        "{tr}update -r -pull : pull latest updates to the plugins repos"]
+        "{tr}up : check updates for the whole project",
+        "{tr}up -c : check updates for core repo",
+        "{tr}up -r : check updates for all plugins repos",
+        "{tr}up -pull : pull latest updates to the whole project",
+        "{tr}up -pull -restart : auto restart after pulled",
+        "{tr}up -c -pull : pull latest updates to the core repo",
+        "{tr}up -r -pull : pull latest updates to the plugins repos"]
 }, del_pre=True, allow_channels=False)
 async def update(message: Message):
     """ check or do updates """
