@@ -11,11 +11,16 @@
 from datetime import datetime
 
 from pyrogram.raw.functions import Ping
-
+from deep_translator import GoogleTranslator
+from quoters.Quote import print_programming_quote as Hengker
 from userge import userge, Message, logging, config, pool, get_collection
 
 SAVED_SETTINGS = get_collection("CONFIGS")
 
+async def getQuote():
+    text = Hengker()
+    indo = GoogleTranslator(source="en", target="id").translate(str(text))
+    return indo
 
 @userge.on_start
 async def _init() -> None:
@@ -125,7 +130,8 @@ async def pingme(message: Message):
     end = datetime.now()
 
     m_s = (end - start).microseconds / 1000
-    await message.edit(f"**Pong!**\n`{m_s} ms`")
+    q = await getQuote()
+    await message.edit(f"**Pong!**\n`{m_s} ms`\n\n{q}")
 
 
 @userge.on_cmd("s", about={
