@@ -12,13 +12,13 @@ from datetime import datetime
 
 from pyrogram.raw.functions import Ping
 from deep_translator import GoogleTranslator
-from quoters.Quote import print_programming_quote as Hengker
+from quoters import Quote
 from userge import userge, Message, logging, config, pool, get_collection
 
 SAVED_SETTINGS = get_collection("CONFIGS")
 
 async def getQuote():
-    text = Hengker()
+    text = Quote.print_programming_quote()
     indo = GoogleTranslator(source="en", target="id").translate(str(text))
     return indo
 
