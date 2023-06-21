@@ -130,9 +130,10 @@ async def pingme(message: Message):
     end = datetime.now()
 
     m_s = (end - start).microseconds / 1000
-    a = await message.edit(f"**Pong!**\n`{m_s} ms`")
+    tping = f"**Pong!**\n`{m_s} ms`"
+    a = await message.edit(tping)
     q = await getQuote()
-    await a.edit(f"\n\n`{q}`")
+    await a.edit(f"{tping}\n\n`{q}`")
 
 
 @userge.on_cmd("s", about={
