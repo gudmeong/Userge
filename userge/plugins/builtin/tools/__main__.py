@@ -20,7 +20,7 @@ SAVED_SETTINGS = get_collection("CONFIGS")
 async def getQuote():
     text = Quote.print_programming_quote()
     indo = GoogleTranslator(source="en", target="id").translate(str(text))
-    return indo
+    return text
 
 @userge.on_start
 async def _init() -> None:
