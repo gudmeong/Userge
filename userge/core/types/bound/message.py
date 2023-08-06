@@ -309,7 +309,7 @@ class Message(RawMessage):
                                                filename=filename,
                                                caption=caption,
                                                log=log,
-                                               reply_to_message_id=reply_to_id
+                                               reply_to_message_id=reply_to_id,
                                                message_thread_id=message_thread_id)
 
     async def reply(self,
@@ -992,7 +992,7 @@ class Message(RawMessage):
                 parse_mode=parse_mode,
                 disable_web_page_preview=disable_web_page_preview,
                 reply_markup=reply_markup,
-                message_thread_id=message_thread_id
+                message_thread_id=message_thread_id,
                 **kwargs)
         except (MessageAuthorRequired, MessageIdInvalid):
             return await self.reply_or_send_as_file(
@@ -1003,7 +1003,7 @@ class Message(RawMessage):
                 parse_mode=parse_mode,
                 disable_web_page_preview=disable_web_page_preview,
                 reply_markup=reply_markup,
-                message_thread_id=message_thread_id
+                message_thread_id=message_thread_id,
                 **kwargs)
 
     # pylint: disable=arguments-differ
