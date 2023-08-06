@@ -260,8 +260,7 @@ class Message(RawMessage):
                             filename: str = "output.txt",
                             caption: str = '',
                             log: Union[bool, str] = False,
-                            delete_message: bool = True,
-                            message_thread_id: Optional[int] = None,) -> 'Message':
+                            delete_message: bool = True) -> 'Message':
         """\nYou can send large outputs as file
 
         Example:
@@ -286,10 +285,6 @@ class Message(RawMessage):
                 to the log channel.
                 If ``str``, the logger name will be updated.
 
-            message_thread_id (```int``, *optional*):
-                Unique identifier for the target message thread (topic) of the forum.
-                for forum supergroups only.
-            
             delete_message (``bool``, *optional*):
                 If ``True``, the message will be deleted
                 after sending the file.
@@ -770,7 +765,7 @@ class Message(RawMessage):
                                    parse_mode: Optional[enums.ParseMode] = None,
                                    disable_web_page_preview: Optional[bool] = None,
                                    reply_markup: InlineKeyboardMarkup = None,
-                                   message_thread_id: Optional[int] = None,
+                                   message_thread_id: Optional[int]: None,
                                    **kwargs) -> Union['Message', bool]:
         """\nThis will first try to message.edit.
         If it raises MessageTooLong error,
