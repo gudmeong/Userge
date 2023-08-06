@@ -396,8 +396,7 @@ class Message(RawMessage):
                                                reply_to_message_id=reply_to_message_id,
                                                schedule_date=schedule_date,
                                                protect_content=protect_content,
-                                               reply_markup=reply_markup,
-                                               )
+                                               reply_markup=reply_markup)
 
     reply_text = reply
 
@@ -765,7 +764,6 @@ class Message(RawMessage):
                                    parse_mode: Optional[enums.ParseMode] = None,
                                    disable_web_page_preview: Optional[bool] = None,
                                    reply_markup: InlineKeyboardMarkup = None,
-                                   message_thread_id: Optional[int]: None,
                                    **kwargs) -> Union['Message', bool]:
         """\nThis will first try to message.edit.
         If it raises MessageTooLong error,
@@ -802,10 +800,6 @@ class Message(RawMessage):
                 Pass "html" to enable HTML-style parsing only.
                 Pass None to completely disable style parsing.
 
-            message_thread_id (```int``, *optional*):
-                Unique identifier for the target message thread (topic) of the forum.
-                for forum supergroups only.
-            
             disable_web_page_preview (``bool``, *optional*):
                 Disables link previews for links in this message.
 
@@ -830,7 +824,7 @@ class Message(RawMessage):
                                    disable_web_page_preview=disable_web_page_preview,
                                    reply_markup=reply_markup)
         except (MessageTooLong, OSError):
-            return await self.reply_as_file(text=text, as_raw=as_raw, log=log, message_thread_id=message_thread_id, **kwargs)
+            return await self.reply_as_file(text=text, as_raw=as_raw, log=log, **kwargs)
 
     async def reply_or_send_as_file(self,
                                     text: str,
@@ -843,7 +837,6 @@ class Message(RawMessage):
                                     disable_notification: Optional[bool] = None,
                                     reply_to_message_id: Optional[int] = None,
                                     reply_markup: InlineKeyboardMarkup = None,
-                                    message_thread_id: Optional[int] = None,
                                     **kwargs) -> Union['Message', bool]:
         """\nThis will first try to message.reply.
         If it raise MessageTooLong error,
@@ -896,10 +889,6 @@ class Message(RawMessage):
                 If the message is a reply, ID of the
                 original message.
 
-            message_thread_id (```int``, *optional*):
-                Unique identifier for the target message thread (topic) of the forum.
-                for forum supergroups only.
-            
             reply_markup (:obj:`InlineKeyboardMarkup`
             | :obj:`ReplyKeyboardMarkup` | :obj:`ReplyKeyboardRemove`
             | :obj:`ForceReply`, *optional*):
@@ -927,7 +916,7 @@ class Message(RawMessage):
                                     reply_to_message_id=reply_to_message_id,
                                     reply_markup=reply_markup)
         except MessageTooLong:
-            return await self.reply_as_file(text=text, as_raw=as_raw, log=log, message_thread_id=message_thread_id, **kwargs)
+            return await self.reply_as_file(text=text, as_raw=as_raw, log=log, **kwargs)
 
     async def force_edit_or_send_as_file(self,
                                          text: str,
@@ -937,7 +926,6 @@ class Message(RawMessage):
                                          parse_mode: Optional[enums.ParseMode] = None,
                                          disable_web_page_preview: Optional[bool] = None,
                                          reply_markup: InlineKeyboardMarkup = None,
-                                         message_thread_id: Optional[int] = None,
                                          **kwargs) -> Union['Message', bool]:
         """\nThis will first try to message.edit_or_send_as_file.
         If it raise MessageAuthorRequired
@@ -977,10 +965,6 @@ class Message(RawMessage):
             reply_markup (:obj:`InlineKeyboardMarkup`, *optional*):
                 An InlineKeyboardMarkup object.
 
-            message_thread_id (```int``, *optional*):
-                Unique identifier for the target message thread (topic) of the forum.
-                for forum supergroups only.
-            
             **kwargs (for message.reply and message.send_as_file)
 
         Returns:
@@ -997,7 +981,6 @@ class Message(RawMessage):
                 parse_mode=parse_mode,
                 disable_web_page_preview=disable_web_page_preview,
                 reply_markup=reply_markup,
-                message_thread_id=message_thread_id
                 **kwargs)
         except (MessageAuthorRequired, MessageIdInvalid):
             return await self.reply_or_send_as_file(
@@ -1008,7 +991,6 @@ class Message(RawMessage):
                 parse_mode=parse_mode,
                 disable_web_page_preview=disable_web_page_preview,
                 reply_markup=reply_markup,
-                message_thread_id=message_thread_id
                 **kwargs)
 
     # pylint: disable=arguments-differ
