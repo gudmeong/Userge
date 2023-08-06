@@ -260,7 +260,8 @@ class Message(RawMessage):
                             filename: str = "output.txt",
                             caption: str = '',
                             log: Union[bool, str] = False,
-                            delete_message: bool = True) -> 'Message':
+                            delete_message: bool = True,
+                            **kwargs) -> 'Message':
         """\nYou can send large outputs as file
 
         Example:
@@ -304,7 +305,8 @@ class Message(RawMessage):
                                                filename=filename,
                                                caption=caption,
                                                log=log,
-                                               reply_to_message_id=reply_to_id)
+                                               reply_to_message_id=reply_to_id
+                                               **kwargs)
 
     async def reply(self,
                     text: str,
