@@ -57,7 +57,7 @@ async def helpme(message: Message) -> None:  # pylint: disable=missing-function-
         return await userge.send_inline_bot_result(
             chat_id=message.chat.id,
             query_id=menu.query_id,
-            result_id=menu.results[1].id
+            result_id=menu.results[1].id,
             message_thread_id=message.message_thread_id)
 
     if not message.input_str:
