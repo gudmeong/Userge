@@ -49,7 +49,7 @@ from userge import userge, Message, config, pool
 from userge.utils import runcmd
 
 CHANNEL = userge.getCLogger()
-thread_id = None
+thread_id: Optional[int] = None
 
 def input_checker(func: Callable[[Message], Awaitable[Any]]):
     async def wrapper(message: Message) -> None:
