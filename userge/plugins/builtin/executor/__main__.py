@@ -107,7 +107,7 @@ __Command:__\n`{cmd}`\n__PID:__\n`{pid}`\n__RETURN:__\n`{ret}`\n\n\
                                        as_raw=as_raw,
                                        parse_mode=enums.ParseMode.MARKDOWN,
                                        filename="exec.txt",
-                                       caption=cmd
+                                       caption=cmd,
                                        message_thread_id=message_thread_id)
 
 
