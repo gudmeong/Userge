@@ -181,12 +181,14 @@ async def check_logs(message: Message):
         await message.client.send_as_file(chat_id=message.chat.id,
                                           text=logs,
                                           filename='userge-heroku.log',
-                                          caption=f'userge-heroku.log [ {limit} lines ]')
+                                          caption=f'userge-heroku.log [ {limit} lines ]',
+                                          message_thread_id=message.message_thread_id,)
     else:
         filename = f"{'loader' if '-l' in message.flags else 'userge'}.log"
         await message.client.send_document(chat_id=message.chat.id,
                                            document=f"logs/{filename}",
-                                           caption=filename)
+                                           caption=filename,
+                                           message_thread_id=message.message_thread_id,)
     await message.delete()
 
 
