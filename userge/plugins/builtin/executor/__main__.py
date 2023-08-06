@@ -49,7 +49,7 @@ from userge import userge, Message, config, pool
 from userge.utils import runcmd
 
 CHANNEL = userge.getCLogger()
-thread_id: Optional[int] = None
+
 
 def input_checker(func: Callable[[Message], Awaitable[Any]]):
     async def wrapper(message: Message) -> None:
@@ -87,9 +87,6 @@ def input_checker(func: Callable[[Message], Awaitable[Any]]):
 @input_checker
 async def exec_(message: Message):
     """ run commands in exec """
-    global thread_id
-    if message.chat.is_forum:
-        thread_id = message.message_thread_id
     await message.edit("`Executing exec ...`")
     cmd = message.filtered_input_str
     as_raw = '-r' in message.flags
@@ -107,8 +104,7 @@ __Command:__\n`{cmd}`\n__PID:__\n`{pid}`\n__RETURN:__\n`{ret}`\n\n\
                                        as_raw=as_raw,
                                        parse_mode=enums.ParseMode.MARKDOWN,
                                        filename="exec.txt",
-                                       caption=cmd,
-                                       message_thread_id=thread_id)
+                                       caption=cmd)
 
 
 _KEY = '_OLD'
@@ -139,9 +135,6 @@ async def eval_(message: Message):
         if t.done():
             del _EVAL_TASKS[t]
 
-    global thread_id
-    if message.chat.is_forum:
-        thread_id = message.message_thread_id
     flags = message.flags
 
     if flags:
@@ -225,8 +218,7 @@ async def eval_(message: Message):
                                            parse_mode=enums.ParseMode.MARKDOWN,
                                            disable_web_page_preview=True,
                                            filename="eval.txt",
-                                           caption=cmd,
-                                           message_thread_id=thread_id)
+                                           caption=cmd)
         else:
             await msg.delete()
 
@@ -269,9 +261,6 @@ async def eval_(message: Message):
 @input_checker
 async def term_(message: Message):
     """ run commands in shell (terminal with live update) """
-    global thread_id
-    if message.chat.is_forum:
-        thread_id = message.message_thread_id
     await message.edit("`Executing terminal ...`")
     cmd = message.filtered_input_str
     as_raw = '-r' in message.flags
@@ -305,7 +294,7 @@ async def term_(message: Message):
 
     out_data = f"{output}<pre>{t_obj.output}</pre>\n{prefix}"
     await message.edit_or_send_as_file(
-        out_data, as_raw=as_raw, parse_mode=enums.ParseMode.HTML, filename="term.txt", caption=cmd, message_thread_id=thread_id)
+        out_data, as_raw=as_raw, parse_mode=enums.ParseMode.HTML, filename="term.txt", caption=cmd)
 
 
 def parse_py_template(cmd: str, msg: Message):
