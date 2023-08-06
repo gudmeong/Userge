@@ -261,7 +261,7 @@ class Message(RawMessage):
                             caption: str = '',
                             log: Union[bool, str] = False,
                             delete_message: bool = True,
-                            **kwargs) -> 'Message':
+                            message_thread_id: Optional[int] = None) -> 'Message':
         """\nYou can send large outputs as file
 
         Example:
@@ -289,6 +289,10 @@ class Message(RawMessage):
             delete_message (``bool``, *optional*):
                 If ``True``, the message will be deleted
                 after sending the file.
+                
+            message_thread_id (```int``, *optional*):
+                Unique identifier for the target message thread (topic) of the forum.
+                for forum supergroups only.
 
         Returns:
             On success, the sent Message is returned.
@@ -306,7 +310,7 @@ class Message(RawMessage):
                                                caption=caption,
                                                log=log,
                                                reply_to_message_id=reply_to_id
-                                               **kwargs)
+                                               message_thread_id=message_thread_id)
 
     async def reply(self,
                     text: str,
@@ -317,6 +321,7 @@ class Message(RawMessage):
                     disable_web_page_preview: Optional[bool] = None,
                     disable_notification: Optional[bool] = None,
                     reply_to_message_id: Optional[int] = None,
+                    message_thread_id: Optional[int] = None,
                     schedule_date: Optional[datetime] = None,
                     protect_content: Optional[bool] = None,
                     reply_markup: InlineKeyboardMarkup = None) -> Union['Message', bool]:
@@ -396,6 +401,7 @@ class Message(RawMessage):
                                                disable_web_page_preview=disable_web_page_preview,
                                                disable_notification=disable_notification,
                                                reply_to_message_id=reply_to_message_id,
+                                               message_thread_id=message_thread_id,
                                                schedule_date=schedule_date,
                                                protect_content=protect_content,
                                                reply_markup=reply_markup)
@@ -766,6 +772,7 @@ class Message(RawMessage):
                                    parse_mode: Optional[enums.ParseMode] = None,
                                    disable_web_page_preview: Optional[bool] = None,
                                    reply_markup: InlineKeyboardMarkup = None,
+                                   message_thread_id: Optional[int] = None,
                                    **kwargs) -> Union['Message', bool]:
         """\nThis will first try to message.edit.
         If it raises MessageTooLong error,
@@ -826,7 +833,7 @@ class Message(RawMessage):
                                    disable_web_page_preview=disable_web_page_preview,
                                    reply_markup=reply_markup)
         except (MessageTooLong, OSError):
-            return await self.reply_as_file(text=text, as_raw=as_raw, log=log, **kwargs)
+            return await self.reply_as_file(text=text, as_raw=as_raw, log=log, message_thread_id=message_thread_id, **kwargs)
 
     async def reply_or_send_as_file(self,
                                     text: str,
@@ -838,6 +845,7 @@ class Message(RawMessage):
                                     disable_web_page_preview: Optional[bool] = None,
                                     disable_notification: Optional[bool] = None,
                                     reply_to_message_id: Optional[int] = None,
+                                    message_thread_id: Optional[int] = None,
                                     reply_markup: InlineKeyboardMarkup = None,
                                     **kwargs) -> Union['Message', bool]:
         """\nThis will first try to message.reply.
@@ -918,7 +926,7 @@ class Message(RawMessage):
                                     reply_to_message_id=reply_to_message_id,
                                     reply_markup=reply_markup)
         except MessageTooLong:
-            return await self.reply_as_file(text=text, as_raw=as_raw, log=log, **kwargs)
+            return await self.reply_as_file(text=text, as_raw=as_raw, log=log, message_thread_id=message_thread_id, **kwargs)
 
     async def force_edit_or_send_as_file(self,
                                          text: str,
@@ -928,6 +936,7 @@ class Message(RawMessage):
                                          parse_mode: Optional[enums.ParseMode] = None,
                                          disable_web_page_preview: Optional[bool] = None,
                                          reply_markup: InlineKeyboardMarkup = None,
+                                         message_thread_id: Optional[int] = None,
                                          **kwargs) -> Union['Message', bool]:
         """\nThis will first try to message.edit_or_send_as_file.
         If it raise MessageAuthorRequired
@@ -983,6 +992,7 @@ class Message(RawMessage):
                 parse_mode=parse_mode,
                 disable_web_page_preview=disable_web_page_preview,
                 reply_markup=reply_markup,
+                message_thread_id=message_thread_id
                 **kwargs)
         except (MessageAuthorRequired, MessageIdInvalid):
             return await self.reply_or_send_as_file(
@@ -993,6 +1003,7 @@ class Message(RawMessage):
                 parse_mode=parse_mode,
                 disable_web_page_preview=disable_web_page_preview,
                 reply_markup=reply_markup,
+                message_thread_id=message_thread_id
                 **kwargs)
 
     # pylint: disable=arguments-differ

@@ -32,7 +32,7 @@ class SendAsFile(RawClient):  # pylint: disable=missing-class-docstring
                            caption: str = '',
                            log: Union[bool, str] = False,
                            reply_to_message_id: Optional[int] = None,
-                           **kwargs) -> 'types.bound.Message':
+                           message_thread_id: Optional[int] = None) -> 'types.bound.Message':
         """\nYou can send large outputs as file
 
         Example:
@@ -80,7 +80,7 @@ class SendAsFile(RawClient):  # pylint: disable=missing-class-docstring
                                        caption=caption[:1024],
                                        disable_notification=True,
                                        reply_to_message_id=reply_to_message_id,
-                                       **kwargs
+                                       message_thread_id=message_thread_id
                                        )
         module = inspect.currentframe().f_back.f_globals['__name__']
         if log:
