@@ -261,7 +261,7 @@ class Message(RawMessage):
                             caption: str = '',
                             log: Union[bool, str] = False,
                             delete_message: bool = True,
-                            message_thread_id: Optional[int] = None) -> 'Message':
+                            message_thread_id: Optional[int] = None) -> Union['Message', bool]:
         """\nYou can send large outputs as file
 
         Example:
@@ -323,6 +323,7 @@ class Message(RawMessage):
                     reply_to_message_id: Optional[int] = None,
                     schedule_date: Optional[datetime] = None,
                     protect_content: Optional[bool] = None,
+                    message_thread_id: Optional[int] = None,
                     reply_markup: InlineKeyboardMarkup = None) -> Union['Message', bool]:
         """\nExample:
                 message.reply("hello")
