@@ -10,12 +10,12 @@
 
 __all__ = ['get_collection']
 
-from motor.motor_asyncio import AsyncIOMotorClient
 from motor.core import AgnosticDatabase, AgnosticCollection
+from async_pymongo import AsyncClient 
 
 from userge import config
 
-_DATABASE: AgnosticDatabase = AsyncIOMotorClient(config.DB_URI)["Userge"]
+_DATABASE: AgnosticDatabase = AsyncClient(config.DB_URI)["Userge"]
 
 
 def get_collection(name: str) -> AgnosticCollection:
