@@ -36,6 +36,7 @@ class SendMessage(RawClient):  # pylint: disable=missing-class-docstring
                            disable_web_page_preview: Optional[bool] = None,
                            disable_notification: Optional[bool] = None,
                            reply_to_message_id: Optional[int] = None,
+                           message_thread_id: Optional[int] = None,
                            schedule_date: Optional[datetime] = None,
                            protect_content: Optional[bool] = None,
                            reply_markup: Union[InlineKeyboardMarkup,
@@ -87,6 +88,10 @@ class SendMessage(RawClient):  # pylint: disable=missing-class-docstring
             reply_to_message_id (``int``, *optional*):
                 If the message is a reply, ID of the original message.
 
+            message_thread_id (```int``, *optional*):
+                Unique identifier for the target message thread (topic) of the forum.
+                for forum supergroups only.
+            
             schedule_date (:py:obj:`~datetime.datetime`, *optional*):
                 Date when the message will be automatically sent. Unix time.
 
@@ -109,6 +114,7 @@ class SendMessage(RawClient):  # pylint: disable=missing-class-docstring
                                          disable_web_page_preview=disable_web_page_preview,
                                          disable_notification=disable_notification,
                                          reply_to_message_id=reply_to_message_id,
+                                         message_thread_id=message_thread_id,
                                          schedule_date=schedule_date,
                                          protect_content=protect_content,
                                          reply_markup=reply_markup)
