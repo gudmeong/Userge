@@ -21,6 +21,7 @@ import time
 from contextlib import suppress
 from types import ModuleType
 from typing import List, Awaitable, Any, Optional, Union
+from async_pymongo import AsyncClient
 
 from pyrogram import types
 from pyrogram.methods import Methods as RawMethods
@@ -239,7 +240,7 @@ class UsergeBot(_AbstractUserge):
     """ UsergeBot, the bot """
 
     def __init__(self, **kwargs) -> None:
-        super().__init__(name="usergeBot", in_memory=True, **kwargs)
+        super().__init__(name="usergeBot", **kwargs)
 
     @property
     def ubot(self) -> 'Userge':
@@ -268,6 +269,9 @@ class Userge(_AbstractUserge):
 
         kwargs['name'] = 'userge'
         kwargs['session_string'] = config.SESSION_STRING or None
+        if config.DB_URI:
+            kwargs["mongodb"] = {"connection": AsyncClient(config.DB_URI), "remove_peers": False}
+        
         super().__init__(**kwargs)
 
         if config.SESSION_STRING:
