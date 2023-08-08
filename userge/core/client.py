@@ -260,6 +260,8 @@ class Userge(_AbstractUserge):
             'workers': config.WORKERS
         }
 
+        if config.DB_URI:
+            kwargs["mongodb"] = {"connection": AsyncClient(config.DB_URI), "remove_peers": False}
         if config.BOT_TOKEN:
             kwargs['bot_token'] = config.BOT_TOKEN
 
@@ -269,8 +271,6 @@ class Userge(_AbstractUserge):
 
         kwargs['name'] = 'userge'
         kwargs['session_string'] = config.SESSION_STRING or None
-        if config.DB_URI:
-            kwargs["mongodb"] = {"connection": AsyncClient(config.DB_URI), "remove_peers": False}
         
         super().__init__(**kwargs)
 
