@@ -257,7 +257,8 @@ class Userge(_AbstractUserge):
         kwargs = {
             'api_id': config.API_ID,
             'api_hash': config.API_HASH,
-            'workers': config.WORKERS
+            'workers': config.WORKERS,
+            'no_updates': False
         }
 
         if config.DB_URI:
