@@ -240,7 +240,7 @@ class UsergeBot(_AbstractUserge):
     """ UsergeBot, the bot """
 
     def __init__(self, **kwargs) -> None:
-        super().__init__(name="usergeBot", no_updates=False, **kwargs)
+        super().__init__(name="usergeBot", **kwargs)
 
     @property
     def ubot(self) -> 'Userge':
@@ -258,7 +258,7 @@ class Userge(_AbstractUserge):
             'api_id': config.API_ID,
             'api_hash': config.API_HASH,
             'workers': config.WORKERS,
-            'no_updates': False,
+            'no_updates': False
         }
 
         if config.DB_URI:
