@@ -43,7 +43,7 @@ class SendMessage(RawClient):  # pylint: disable=missing-class-docstring
                                                ReplyKeyboardMarkup,
                                                ReplyKeyboardRemove,
                                                ForceReply] = None,
-                           reply_to_story_id: Optional[int] = None
+                           reply_to_story_id: Optional[int] = None,
                            ) -> Union['types.bound.Message', bool]:
         """\nSend text messages.
 
