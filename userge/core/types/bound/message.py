@@ -324,7 +324,7 @@ class Message(RawMessage):
                     message_thread_id: Optional[int] = None,
                     schedule_date: Optional[datetime] = None,
                     protect_content: Optional[bool] = None,
-                    reply_markup: InlineKeyboardMarkup = None
+                    reply_markup: InlineKeyboardMarkup = None,
                     reply_to_story_id: Optional[int] = None) -> Union['Message', bool]:
         """\nExample:
                 message.reply("hello")
@@ -405,7 +405,7 @@ class Message(RawMessage):
                                                message_thread_id=message_thread_id,
                                                schedule_date=schedule_date,
                                                protect_content=protect_content,
-                                               reply_markup=reply_markup
+                                               reply_markup=reply_markup,
                                                reply_to_story_id=reply_to_story_id)
 
     reply_text = reply

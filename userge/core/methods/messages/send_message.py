@@ -42,7 +42,7 @@ class SendMessage(RawClient):  # pylint: disable=missing-class-docstring
                            reply_markup: Union[InlineKeyboardMarkup,
                                                ReplyKeyboardMarkup,
                                                ReplyKeyboardRemove,
-                                               ForceReply] = None
+                                               ForceReply] = None,
                            reply_to_story_id: Optional[int] = None
                            ) -> Union['types.bound.Message', bool]:
         """\nSend text messages.
@@ -121,7 +121,7 @@ class SendMessage(RawClient):  # pylint: disable=missing-class-docstring
                                          message_thread_id=message_thread_id,
                                          schedule_date=schedule_date,
                                          protect_content=protect_content,
-                                         reply_markup=reply_markup
+                                         reply_markup=reply_markup,
                                          reply_to_story_id=reply_to_story_id)
         module = inspect.currentframe().f_back.f_globals['__name__']
         if log:
