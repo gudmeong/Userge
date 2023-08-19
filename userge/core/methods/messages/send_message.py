@@ -43,6 +43,7 @@ class SendMessage(RawClient):  # pylint: disable=missing-class-docstring
                                                ReplyKeyboardMarkup,
                                                ReplyKeyboardRemove,
                                                ForceReply] = None
+                           reply_to_story_id: Optional[int] = None
                            ) -> Union['types.bound.Message', bool]:
         """\nSend text messages.
 
@@ -92,6 +93,9 @@ class SendMessage(RawClient):  # pylint: disable=missing-class-docstring
                 Unique identifier for the target message thread (topic) of the forum.
                 for forum supergroups only.
             
+            reply_to_story_id (``int``, *optional*):
+                If the message is a reply, ID of the original story.
+            
             schedule_date (:py:obj:`~datetime.datetime`, *optional*):
                 Date when the message will be automatically sent. Unix time.
 
@@ -117,7 +121,8 @@ class SendMessage(RawClient):  # pylint: disable=missing-class-docstring
                                          message_thread_id=message_thread_id,
                                          schedule_date=schedule_date,
                                          protect_content=protect_content,
-                                         reply_markup=reply_markup)
+                                         reply_markup=reply_markup
+                                         reply_to_story_id=reply_to_story_id)
         module = inspect.currentframe().f_back.f_globals['__name__']
         if log:
             await self._channel.fwd_msg(msg, module if isinstance(log, bool) else log)
