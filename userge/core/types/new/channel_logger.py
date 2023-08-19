@@ -72,14 +72,12 @@ class ChannelLogger:
         try:
             msg = await self._client.send_message(chat_id=self._id,
                                                   text=string.format(text.strip()),
-                                                  disable_web_page_preview=True,
-                                                  reply_to_story_id=None)
+                                                  disable_web_page_preview=True)
         except MessageTooLong:
             msg = await self._client.send_as_file(chat_id=self._id,
                                                   text=string.format(text.strip()),
                                                   filename="logs.log",
-                                                  caption=string,
-                                                  reply_to_story_id=None)
+                                                  caption=string)
         return msg.id
 
     async def fwd_msg(self,
