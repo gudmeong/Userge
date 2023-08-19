@@ -113,7 +113,8 @@ class Conversation:
 
     async def send_message(self,
                            text: str,
-                           parse_mode: Optional[enums.ParseMode] = None) -> RawMessage:
+                           parse_mode: Optional[enums.ParseMode] = None,
+                           reply_to_story_id: Optional[int] = None) -> RawMessage:
         """\nSend text messages to the conversation.
 
         Parameters:
@@ -126,7 +127,8 @@ class Conversation:
             :obj:`Message`: On success, the sent text message is returned.
         """
         return await self._client.send_message(chat_id=self._chat_id,
-                                               text=text, parse_mode=parse_mode)
+                                               text=text, parse_mode=parse_mode,
+                                               reply_to_story_id=reply_to_story_id)
 
     async def send_document(self, document: str) -> Optional[RawMessage]:
         """\nSend documents to the conversation.
