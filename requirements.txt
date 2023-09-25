@@ -1,5 +1,5 @@
 dnspython
 heroku3
 motor
-pyrofork==2.3.4
+pyrofork==2.3.0
 tgcrypto
